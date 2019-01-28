@@ -1,8 +1,8 @@
-package clientYellow;
+package client.clientYellow;
 
-import server.Affichage;
+import client.Affichage;
 import server.model.Game;
-import java.io.IOException;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -15,11 +15,11 @@ public class ClientYellow {
 
     private int equipe = Game.YELLOW;
 
+    private Game game;
+
     public void run (){
 
         try {
-            Game game;
-
             Socket socketOut = new Socket(ADRESS, PORT_OUT);
             ObjectOutputStream OutputStream = new ObjectOutputStream(socketOut.getOutputStream());
 
@@ -28,20 +28,32 @@ public class ClientYellow {
             Socket socketIn = serverSocket.accept();
             ObjectInputStream InputStream = new ObjectInputStream(socketIn.getInputStream());
 
-            game = (Game)InputStream.readObject();
-
             Affichage affichage = new Affichage();
-            affichage.affichGame(game);
+            game = (Game) InputStream.readObject();
 
+            while(game.getGagnant() == Game.DEFAULT){
+                affichage.affichGame(game);
+                play(affichage);
+                OutputStream.writeObject(game);
+                game = (Game) InputStream.readObject();
+            }
 
+            affichage.affichMsg("Le gagnant est : "+game.getGagnant());
 
-
-//            Socket socket = new Socket(ADRESS,PORT);
-//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-//            objectOutputStream.writeObject(game);
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void play(Affichage affichage){
+        int x = affichage.saisie("x");
+        int y = affichage.saisie("y");
+
+        while(!game.insererPion(x,y, equipe)){
+            affichage.affichMsg("Coordonnées invalides ! ");
+            x = affichage.saisie("x");
+            y = affichage.saisie("y");
         }
     }
 }

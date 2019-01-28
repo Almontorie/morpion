@@ -1,4 +1,4 @@
-package clientYellow;
+package client.clientYellow;
 
     public class ConsoleYellow {
 

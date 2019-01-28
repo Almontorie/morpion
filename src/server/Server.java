@@ -15,6 +15,8 @@ public class Server {
     public static final int PORT_OUT_YELLOW = 8091;
     private static final String ADRESS="127.0.0.1";
 
+    public Game game;
+
     public void run (){
         try{
             ServerSocket serverSocketYellow = new ServerSocket(PORT_IN_YELLOW);
@@ -32,20 +34,26 @@ public class Server {
             ObjectOutputStream yellowOutputStream = new ObjectOutputStream(socketOutYellow.getOutputStream());
             ObjectOutputStream redOutputStream = new ObjectOutputStream(socketOutRed.getOutputStream());
 
-            Game game = new Game();
+            game = new Game();
+
+            while(true){
+                if(game.getGagnant() == Game.DEFAULT) {
+                    yellowOutputStream.writeObject(game);
+                    game = (Game) yellowInputStream.readObject();
+                }
+                else
+                    break;
+
+                if (game.getGagnant() == Game.DEFAULT) {
+                    redOutputStream.writeObject(game);
+                    game = (Game) redInputStream.readObject();
+                }
+                else
+                    break;
+            }
 
             yellowOutputStream.writeObject(game);
             redOutputStream.writeObject(game);
-
-
-//            while(game.getGagnant() == Game.DEFAULT){
-//
-//            }
-
-//            ObjectInputStream objectInputStream = new ObjectInputStream(socketAccepte.getInputStream());
-//            Game jeu = (Game)objectInputStream.readObject();
-//            Affichage affichage = new Affichage();
-//            affichage.affichGame(jeu);
         }
         catch (Exception e){
             System.err.println(e.getMessage());

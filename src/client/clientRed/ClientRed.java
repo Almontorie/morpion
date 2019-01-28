@@ -1,10 +1,11 @@
-package clientRed;
+package client.clientRed;
 
-import server.Affichage;
+import client.Affichage;
 import server.model.Game;
-import java.io.IOException;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.GenericArrayType;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -15,11 +16,11 @@ public class ClientRed {
 
     private int equipe = Game.RED;
 
+    public Game game;
+
     public void run (){
 
         try {
-            Game game;
-
             Socket socketOut = new Socket(ADRESS, PORT_OUT);
             ObjectOutputStream OutputStream = new ObjectOutputStream(socketOut.getOutputStream());
 
@@ -28,17 +29,32 @@ public class ClientRed {
             Socket socketIn = serverSocket.accept();
             ObjectInputStream InputStream = new ObjectInputStream(socketIn.getInputStream());
 
-            game = (Game)InputStream.readObject();
-
             Affichage affichage = new Affichage();
-            affichage.affichGame(game);
+            game = (Game) InputStream.readObject();
 
-//            Game game = new Game();
-//            Socket socket = new Socket(ADRESS,PORT);
-//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-//            objectOutputStream.writeObject(game);
+            while(game.getGagnant() == Game.DEFAULT){
+                affichage.affichGame(game);
+                play(affichage);
+                OutputStream.writeObject(game);
+                game = (Game) InputStream.readObject();
+            }
+
+            affichage.affichMsg("Le gagnant est : "+game.getGagnant());
+
+
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void play(Affichage affichage){
+        int x = affichage.saisie("x");
+        int y = affichage.saisie("y");
+
+        while(!game.insererPion(x,y, equipe)){
+            affichage.affichMsg("Coordonnées invalides ! ");
+            x = affichage.saisie("x");
+            y = affichage.saisie("y");
         }
     }
 }

@@ -25,7 +25,15 @@ public class Game implements Serializable {
         return gagnant;
     }
 
-    public boolean insererPion(int y, int x, int color){
+    public boolean insererPion(int x, int y, int color){
+        //nous avions inversé x et y
+        int tmp = x;
+        x = y;
+        y = tmp;
+
+        if(x > LARGEUR-1 || y > HAUTEUR-1 || x < 0 || y < 0) return false;
+
+
         if(!isSetCell(x,y)){
             tab[x][y] = color;
             cptPion++;

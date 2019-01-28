@@ -1,4 +1,4 @@
-package clientRed;
+package client.clientRed;
 
 public class ConsoleRed {
 
