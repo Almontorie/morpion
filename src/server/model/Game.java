@@ -9,7 +9,7 @@ public class Game implements Serializable {
     public final static int DEFAULT = 0;
     public final static int YELLOW = 1;
     public final static int RED = 2;
-    private final static int EXAEQUO = 3;
+    public final static int EXAEQUO = 3;
 
 
 
@@ -25,7 +25,7 @@ public class Game implements Serializable {
         return gagnant;
     }
 
-    public boolean insererPion(int x, int y, int color){
+    public boolean insererPion(int x, int y, int color) {
         //nous avions inversé x et y
         int tmp = x;
         x = y;
@@ -34,10 +34,10 @@ public class Game implements Serializable {
         if(x > LARGEUR-1 || y > HAUTEUR-1 || x < 0 || y < 0) return false;
 
 
-        if(!isSetCell(x,y)){
+        if(!isSetCell(x,y)) {
             tab[x][y] = color;
             cptPion++;
-            if(cptPion >= 5)
+            if (cptPion >= 5)
                 aGagner(x, y);
             return true;
         }
@@ -137,13 +137,13 @@ public class Game implements Serializable {
         }
         else if (x == 1 && y == 1){
             if(tab[x-1][y+1] == color){
-                if(tab[x+1][y+1] == color){
+                if(tab[x+1][y-1] == color){
                     gagnant = color;
                     return true;
                 }
             }
             if(tab[x-1][y-1] == color){
-                if(tab[x+1][y-1] == color){
+                if(tab[x+1][y+1] == color){
                     gagnant = color;
                     return true;
                 }
